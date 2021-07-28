@@ -5,28 +5,40 @@ from nltk.tokenize import word_tokenize
 
 
 def reduceStopwords(verse):
+    stopWords = set(stopwords.words("english"))
     reducedVerse = []
     for word in verse:
         if word not in stopWords:
             reducedVerse.append(word)
     return reducedVerse
 
-stopWords = set(stopwords.words("english"))
-
-bibleVerses = []
-# load bible txt file
-with open("bible/KJV/Genesis.txt",mode="r",encoding="UTF-8") as bibleFile:
-    bibleVerses = bibleFile.readlines()
-
-# lower all bible verses
-bibleVerses = [ verse.lower() for verse in bibleVerses]
-
-bibleVerses = [ reduceStopwords(word_tokenize(verse)[1:]) for verse in bibleVerses ]
-
-# lemmatize all bible verses 
-for i,verse in enumerate(bibleVerses):
-    bibleVerses[i] = [WordNetLemmatizer().lemmatize(word) for word in verse]
-# print
-for i in bibleVerses:
-    print(i)
+def bibleToDict(filePath):
+    # load bible txt file
+    with open(f"{filePath}",mode="r",encoding="UTF-8") as bibleFile:
+        bibleVerses = bibleFile.readlines()
+        # lower all bible verses
+        bibleVerses = [ verse.lower() for verse in bibleVerses]
+        bibleVerses = [ reduceStopwords(word_tokenize(verse)[1:]) for verse in bibleVerses ]
+        # lemmatize all bible verses 
+        """
+        for i,verse in enumerate(bibleVerses):
+            bibleVerses[i] = [WordNetLemmatizer().lemmatize(word) for word in verse]
+        """
+    # make word dict
+    bibleWordDict = dict()
+    for verse in bibleVerses:
+        for word in verse:
+            if word in bibleWordDict:
+                bibleWordDict[word] += 1
+            else:
+                bibleWordDict[word] = 1
+    return bibleWordDict
+def equalizeDict(dict1,dict2):
+    for wordNum in list(dict2.keys()):
+        if wordNum not in dict1:
+            dict1[wordNum] = 0
+    for wordNum in list(dict1.keys()):
+        if wordNum not in dict2:
+            dict2[wordNum] = 0
+    return dict1,dict2
 
