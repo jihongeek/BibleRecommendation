@@ -2,7 +2,7 @@
 from nltk.stem import WordNetLemmatizer,PorterStemmer,LancasterStemmer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-
+import string
 
 def reduceStopwords(verse):
     stopWords = set(stopwords.words("english"))
@@ -16,9 +16,12 @@ def bibleToDict(filePath):
     # load bible txt file
     with open(f"{filePath}",mode="r",encoding="UTF-8") as bibleFile:
         bibleVerses = bibleFile.readlines()
-        # lower all bible verses
-        bibleVerses = [ verse.lower() for verse in bibleVerses]
+        # lower and remove punctuation all bible verses
+        table = str.maketrans('','',string.punctuation)
+
+        bibleVerses = [ verse.lower().translate(table) for verse in bibleVerses]
         bibleVerses = [ reduceStopwords(word_tokenize(verse)[1:]) for verse in bibleVerses ]
+        
         # lemmatize all bible verses 
         """
         for i,verse in enumerate(bibleVerses):
