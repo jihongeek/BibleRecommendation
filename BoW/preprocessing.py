@@ -5,7 +5,9 @@ from nltk.tokenize import word_tokenize
 import string
 
 def reduceStopwords(verse):
+    
     stopWords = set(stopwords.words("english"))
+    stopWords = stopWords.union(["ye","thou","thee","thy","thine"])
     reducedVerse = []
     for word in verse:
         if word not in stopWords:
@@ -27,6 +29,11 @@ def bibleToDict(filePath):
         for i,verse in enumerate(bibleVerses):
             bibleVerses[i] = [WordNetLemmatizer().lemmatize(word) for word in verse]
         """
+        # poter stemming all bible verses
+        
+        for i,verse in enumerate(bibleVerses):
+            bibleVerses[i] = [PorterStemmer().stem(word) for word in verse]
+        
     # make word dict
     bibleWordDict = dict()
     for verse in bibleVerses:
