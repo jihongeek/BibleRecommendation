@@ -14,25 +14,24 @@ def reduceStopwords(verse):
             reducedVerse.append(word)
     return reducedVerse
 
-def bibleToDict(filePath):
+def bibleToDict(filePath,lemmatize = False, stem = False):
     # load bible txt file
     with open(f"{filePath}",mode="r",encoding="UTF-8") as bibleFile:
         bibleVerses = bibleFile.readlines()
         # lower and remove punctuation all bible verses
-        table = str.maketrans('','',string.punctuation)
+        table = str.maketrans('','',string.punctuation+"’")
 
         bibleVerses = [ verse.lower().translate(table) for verse in bibleVerses]
         bibleVerses = [ reduceStopwords(word_tokenize(verse)[1:]) for verse in bibleVerses ]
         
         # lemmatize all bible verses 
-        """
-        for i,verse in enumerate(bibleVerses):
-            bibleVerses[i] = [WordNetLemmatizer().lemmatize(word) for word in verse]
-        """
+        if lemmatize:
+            for i,verse in enumerate(bibleVerses):
+                bibleVerses[i] = [WordNetLemmatizer().lemmatize(word) for word in verse]
         # poter stemming all bible verses
-        
-        for i,verse in enumerate(bibleVerses):
-            bibleVerses[i] = [PorterStemmer().stem(word) for word in verse]
+        if stem:
+            for i,verse in enumerate(bibleVerses):
+                bibleVerses[i] = [PorterStemmer().stem(word) for word in verse]
         
     # make word dict
     bibleWordDict = dict()
